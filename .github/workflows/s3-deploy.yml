@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Deploy app to S3
 
 on:
   workflow_dispatch:
