@@ -11,7 +11,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    apiFetch("https://www.rochestermfa.org/api/rmfa/v1/collection/all");
+    apiFetch("https://www.rochestermfa.org/api/rmfa/v1/collection/list?collection_number=-1");
   }, []);
 
   const renderList = () => {
