@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
 import { Buffer } from 'buffer';
+import Select from 'react-select';
 import './App.css';
 
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
+    const [bio1, setBio1] = useState('');
+    const [bio2, setBio2] = useState('');
     const [error, setError] = useState(false);
+    const [selectedReport, setSelectedReport] = useState(1);
 
-    const apiFetch = async (url) => {
-        const response = await fetch(url);
+    const apiFetch = async (url, body) => {
+        const response = await fetch(url, {
+            method: 'post',
+            body: JSON.stringify(body),
+            headers: { 'Content-Type': 'application/json' }
+        });
 
         if (!response.ok) {
             throw new Error('Error fetching data fron API.');
         }
 
-        const body = await response.text();
+        const text = await response.text();
 
-        return Buffer.from(body, 'base64');
+        return Buffer.from(text, 'base64');
     }
 
     const printLabels = async () => {
@@ -29,7 +37,13 @@ const Labels = () => {
 
         let data;
         try {
-            data = await apiFetch("http://localhost:8080/reports/collectionAvery5160?collectionNumber=" + userInput);
+            let reportParams = {
+                collectionNumber: userInput,
+                artBio: [bio2, bio1]
+            };
+
+            data = await apiFetch("http://localhost:8080/reports/" + selectedReport, reportParams);
+
         } catch (e) {
             setError("Error generating report. Check that your input is valid.");
             return;
@@ -40,6 +54,11 @@ const Labels = () => {
         window.open(url);
     };
 
+    const reportOptions = [
+        { value: 'collectionAvery5160', label: 'Avery 5160 - 30 /sheet' },
+        { value: 'collectionAvery5126', label: 'Avery 5126 - 2 /sheet' }
+    ]
+
 
     return (
         <div>
@@ -47,8 +66,29 @@ const Labels = () => {
 
             {error && <div className="error">{error}</div>}
 
-            <textarea rows="10" cols="50" value={collectionNumberInput} onChange={(event) => setCollectionNumberInput(event.target.value)}>
+            <div>Selected Report</div>
+            <Select options={reportOptions}
+                value={reportOptions.filter(obj => obj.value === selectedReport)}
+                onChange={(e) => {
+                    setSelectedReport(e.value);
+                }}
+                className="report-select" />
+
+            <div>Collection Numbers</div>
+            <textarea rows="5" cols="50" value={collectionNumberInput} onChange={(event) => setCollectionNumberInput(event.target.value)}>
             </textarea>
+
+            {selectedReport === 'collectionAvery5126' &&
+                <>
+                    <div>Bio #1</div>
+                    <textarea rows="10" cols="50" value={bio1} onChange={(event) => setBio1(event.target.value)}>
+                    </textarea>
+
+                    <div>Bio #2</div>
+                    <textarea rows="10" cols="50" value={bio2} onChange={(event) => setBio2(event.target.value)}>
+                    </textarea>
+                </>
+            }
 
             <button className="button" onClick={printLabels}>Generate</button>
         </div>
