@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { Buffer } from 'buffer';
 import Select from 'react-select';
-import './App.css';
+import { saveAs } from 'file-saver';
+import classNames from "classnames";
 
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
-    const [bio1, setBio1] = useState('');
-    const [bio2, setBio2] = useState('');
+    const [bio, setBio] = useState(['', '']);
     const [error, setError] = useState(false);
-    const [selectedReport, setSelectedReport] = useState(1);
+    const [selectedReport, setSelectedReport] = useState(false);
 
     const apiFetch = async (url, body) => {
         const response = await fetch(url, {
             method: 'post',
             body: JSON.stringify(body),
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
         });
 
         if (!response.ok) {
             throw new Error('Error fetching data fron API.');
         }
 
-        const text = await response.text();
+        const json = await response.json();
 
-        return Buffer.from(text, 'base64');
+        return json;
     }
 
     const printLabels = async () => {
@@ -32,65 +32,88 @@ const Labels = () => {
         let userInput = collectionNumberInput.trim().split(',');
 
         if (userInput.length === 1 && userInput[0] === '') {
-            userInput = '-1'
+            userInput = ['-1']
         }
 
-        let data;
+        let reportParams = {
+            collectionNumber: userInput,
+            artBio: bio
+        };
+
+        let data, report;
         try {
-            let reportParams = {
-                collectionNumber: userInput,
-                artBio: [bio2, bio1]
-            };
-
             data = await apiFetch("http://localhost:8080/reports/" + selectedReport, reportParams);
-
+            report = Buffer.from(data.report, 'base64')
         } catch (e) {
             setError("Error generating report. Check that your input is valid.");
             return;
         }
 
-        const blob = new Blob([data], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        window.open(url);
+        const blob = new Blob([report], { type: 'application/pdf' });
+        saveAs(blob, data.reportName + ".pdf");
     };
 
+    const updateBio = (position, value) => {
+        let newBio = [...bio];
+        newBio[position] = value;
+        setBio(newBio);
+    }
+
     const reportOptions = [
-        { value: 'collectionAvery5160', label: 'Avery 5160 - 30 /sheet' },
-        { value: 'collectionAvery5126', label: 'Avery 5126 - 2 /sheet' }
+        { value: 'collectionAvery5160', label: 'Avery 5160 - 30 per sheet' },
+        { value: 'collectionAvery5126', label: 'Avery 5126 - 2 per sheet' }
     ]
 
 
     return (
-        <div>
-            <h1>Collection Labels</h1>
+        <div className="report-input mx-auto mt-3">
+            <h2 className="mb-3">Collection Labels</h2>
 
-            {error && <div className="error">{error}</div>}
-
-            <div>Selected Report</div>
-            <Select options={reportOptions}
-                value={reportOptions.filter(obj => obj.value === selectedReport)}
-                onChange={(e) => {
-                    setSelectedReport(e.value);
-                }}
-                className="report-select" />
-
-            <div>Collection Numbers</div>
-            <textarea rows="5" cols="50" value={collectionNumberInput} onChange={(event) => setCollectionNumberInput(event.target.value)}>
-            </textarea>
-
-            {selectedReport === 'collectionAvery5126' &&
-                <>
-                    <div>Bio #1</div>
-                    <textarea rows="10" cols="50" value={bio1} onChange={(event) => setBio1(event.target.value)}>
-                    </textarea>
-
-                    <div>Bio #2</div>
-                    <textarea rows="10" cols="50" value={bio2} onChange={(event) => setBio2(event.target.value)}>
-                    </textarea>
-                </>
+            {error &&
+                <div className="alert alert-warning alert-dismissible fade show" role="alert">
+                    {error}
+                    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             }
 
-            <button className="button" onClick={printLabels}>Generate</button>
+            <div className="mb-3">
+                <label className="form-label">Selected Report</label>
+                <Select options={reportOptions}
+                    value={reportOptions.filter(obj => obj.value === selectedReport)}
+                    onChange={(e) => {
+                        setSelectedReport(e.value);
+
+                    }} />
+            </div>
+
+            {selectedReport &&
+                <div className="mb-3">
+                    <label className="form-label">Collection Numbers</label>
+                    <textarea className="form-control" rows="5" value={collectionNumberInput}
+                        onChange={(event) => setCollectionNumberInput(event.target.value)}>
+                    </textarea>
+                </div>
+            }
+
+            {selectedReport === 'collectionAvery5126' &&
+                <div className="row mb-3">
+                    <div className="col">
+                        <label className="form-label">Bio #1</label>
+                        <textarea className="form-control" rows="10" value={bio[0]} onChange={(event) => updateBio(0, event.target.value)}>
+                        </textarea>
+                    </div>
+                    <div className="col">
+                        <label className="form-label">Bio #2</label>
+                        <textarea className="form-control" rows="10" value={bio[1]} onChange={(event) => updateBio(1, event.target.value)}>
+                        </textarea>
+                    </div>
+
+                </div>
+            }
+
+            <button className={classNames("btn", "btn-primary", "mb-3", {
+                disabled: !selectedReport
+            })} onClick={printLabels}>Generate</button>
         </div>
     );
 }
