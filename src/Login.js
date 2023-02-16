@@ -19,13 +19,14 @@ const Login = () => {
         width: 'auto'
     }
 
-    const buttonStyle = {
-    }
-
     const doLogin = () => {
-        if (auth.login(email, password)) {
-            setLoggedIn(true);
-        }
+        auth.login(email, password).then((res) => {
+            if (res) {
+                setLoggedIn(true);
+            }
+        }).catch((err) => {
+            console.log("Failed login")
+        })
     }
 
     return (loggedIn ? <Navigate to="/" replace /> :
@@ -50,7 +51,6 @@ const Login = () => {
                 </div>
                 <div className="d-grid col-4 mx-auto">
                     <button className="btn btn-primary"
-                        style={buttonStyle}
                         onClick={doLogin}>
                         Login
                     </button>

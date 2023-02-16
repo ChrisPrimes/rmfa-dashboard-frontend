@@ -4,27 +4,13 @@ import Select from 'react-select';
 import { saveAs } from 'file-saver';
 import classNames from "classnames";
 
+import { ApiService } from './service/ApiService';
+
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
     const [bio, setBio] = useState(['', '']);
     const [error, setError] = useState(false);
     const [selectedReport, setSelectedReport] = useState(false);
-
-    const apiFetch = async (url, body) => {
-        const response = await fetch(url, {
-            method: 'post',
-            body: JSON.stringify(body),
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-        });
-
-        if (!response.ok) {
-            throw new Error('Error fetching data fron API.');
-        }
-
-        const json = await response.json();
-
-        return json;
-    }
 
     const printLabels = async () => {
         setError(false);
@@ -42,9 +28,10 @@ const Labels = () => {
 
         let data, report;
         try {
-            data = await apiFetch("http://localhost:8080/reports/" + selectedReport, reportParams);
+            data = await ApiService.post("http://localhost:8080/reports/" + selectedReport, reportParams, true);
             report = Buffer.from(data.report, 'base64')
         } catch (e) {
+            console.error(e);
             setError("Error generating report. Check that your input is valid.");
             return;
         }

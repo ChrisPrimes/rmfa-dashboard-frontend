@@ -1,3 +1,5 @@
+import { ApiService } from "./ApiService";
+
 const KEY_TOKEN = 'userToken';
 
 const getToken = () => {
@@ -16,8 +18,12 @@ const useAuth = () => {
         getToken: () => {
             return getToken();
         },
-        login: (email, password) => {
-            setToken(123);
+        login: async (email, password) => {
+            const data = await ApiService.post("http://localhost:8080/authorize", {
+                username: email,
+                password: password
+            });
+            setToken(data.token);
             return true;
         },
         logout: () => {
@@ -26,4 +32,5 @@ const useAuth = () => {
     })
 }
 
-export { useAuth };
+export { useAuth }; 
+export default useAuth;
