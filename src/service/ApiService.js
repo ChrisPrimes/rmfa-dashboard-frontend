@@ -16,7 +16,15 @@ const ApiService = {
         });
 
         if (!response.ok) {
-            throw new Error('Error fetching data fron API.');
+            if(response.status === 401) {
+                auth().logout();
+                alert('Your session has expired.');
+                window.location = '/';
+                return;
+            } else {
+                throw new Error('Error fetching data fron API.');
+            }
+            
         }
 
         const json = await response.json();
