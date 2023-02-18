@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Navigate } from "react-router-dom";
-import { useAuth } from './service/AuthService'
+import { AuthService } from './service/AuthService'
 
 const Login = () => {
-    const auth = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loggedIn, setLoggedIn] = useState(auth.isLoggedIn());
+    const [loggedIn, setLoggedIn] = useState(AuthService.isLoggedIn());
 
     const boxStyle = {
         backgroundColor: '#edf1f7',
@@ -20,7 +19,7 @@ const Login = () => {
     }
 
     const doLogin = () => {
-        auth.login(email, password).then((res) => {
+        AuthService.login(email, password).then((res) => {
             if (res) {
                 setLoggedIn(true);
             }

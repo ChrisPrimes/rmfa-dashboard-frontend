@@ -1,4 +1,4 @@
-import auth from './AuthService'
+import { AuthService } from './AuthService'
 
 const ApiService = {
     post: async (url, body, authenticated = false) => {
@@ -6,7 +6,7 @@ const ApiService = {
         let headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': authenticated ? `Bearer ${auth().getToken()}` : null
+            'Authorization': authenticated ? `Bearer ${AuthService.getToken()}` : null
         };
 
         const response = await fetch(url, {
@@ -16,15 +16,15 @@ const ApiService = {
         });
 
         if (!response.ok) {
-            if(response.status === 401) {
-                auth().logout();
+            if (response.status === 401) {
+                AuthService.logout();
                 alert('Your session has expired.');
                 window.location = '/';
                 return;
             } else {
                 throw new Error('Error fetching data fron API.');
             }
-            
+
         }
 
         const json = await response.json();
