@@ -23,7 +23,10 @@ const List = () => {
     return (
         <div className="mt-3">
             <h2 className="mb-3">Collection List</h2>
-            {data && renderList()}
+            <div className="collection-list">
+                {data && renderList()}
+            </div>
+
         </div>
     );
 }
