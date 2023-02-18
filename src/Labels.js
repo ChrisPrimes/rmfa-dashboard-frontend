@@ -28,7 +28,7 @@ const Labels = () => {
 
         let data, report;
         try {
-            data = await ApiService.post("http://localhost:8080/reports/" + selectedReport, reportParams, true);
+            data = await ApiService.post(ApiService.serverRoot() + "/reports/" + selectedReport, reportParams, true);
             report = Buffer.from(data.report, 'base64')
         } catch (e) {
             console.error(e);

@@ -35,11 +35,11 @@ const Login = () => {
                     <img style={imgStyle} className="mx-auto d-block mb-4" src="/logo.png" alt="RMFA logo" />
                 </div>
                 <div className="form-floating mb-4">
-                    <input type="email" className="form-control" placeholder="name@example.com"
+                    <input type="text" className="form-control" placeholder="username"
                         value={email} onChange={(event) => {
                             setEmail(event.target.value)
                         }} />
-                    <label className="form-label">Email</label>
+                    <label className="form-label">Username</label>
                 </div>
                 <div className="form-floating mb-4">
                     <input type="password" className="form-control" placeholder="Password"

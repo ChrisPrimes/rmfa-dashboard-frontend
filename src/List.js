@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
+import { ApiService } from './service/ApiService';
+
 const List = () => {
     const [data, setData] = useState(false)
 
-    const apiFetch = async (url) => {
-        const response = await fetch(url);
-        const json = await response.json();
-        setData(json);
-    }
-
     useEffect(() => {
-        apiFetch("https://www.rochestermfa.org/api/rmfa/v1/collection/list?collection_number=-1");
+        ApiService.get("https://www.rochestermfa.org/api/rmfa/v1/collection/list?collection_number=-1").then((res) => {
+            setData(res);
+        });
     }, []);
 
     const renderList = () => {
@@ -30,4 +28,4 @@ const List = () => {
     );
 }
 
-export {List};
+export { List };

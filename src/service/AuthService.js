@@ -18,7 +18,7 @@ const AuthService = {
         return getToken();
     },
     login: async (email, password) => {
-        const data = await ApiService.post("http://localhost:8080/authorize", {
+        const data = await ApiService.post(ApiService.serverRoot() + "/authorize", {
             username: email,
             password: password
         });
