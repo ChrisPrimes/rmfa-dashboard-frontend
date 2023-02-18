@@ -17,6 +17,10 @@ import { Logout } from './Logout'
 import './style.scss';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
+  useEffect(() => {
+    apiFetch("https://www.rochestermfa.org/api/rmfa/v1/collection/list?collection_number=-1");
+  }, []);
+
 const App = () => {
   return (
     <Router>
