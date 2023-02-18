@@ -1,32 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate
+} from "react-router-dom";
+
+import { List } from './List'
+import { Labels } from './Labels'
+import { Nav } from './Nav'
+import { Error404 } from './Error404'
+import { RouteGuard } from './RouteGuard'
+import { Login } from './Login'
+import { Logout } from './Logout'
+
+import './style.scss';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const App = () => {
-  const [data, setData] = useState(false)
-
-  const apiFetch = async (url) => {
-    const response = await fetch(url);
-    const json = await response.json();
-    setData(json);
-  }
-
-  useEffect(() => {
-    apiFetch("https://www.rochestermfa.org/api/rmfa/v1/collection/list?collection_number=-1");
-  }, []);
-
-  const renderList = () => {
-    let list = [];
-    data.forEach(element => {
-      list.push(<p key={element.id}>{element.collection_number}. {element.artist}, <span class="italic">{element.title}</span>, {element.art_medium}</p>)
-    });
-
-    return list;
-  };
-
   return (
-    <div>
-      {data && renderList()}
-    </div>
+    <Router>
+      <Nav excludeRoutes={["/login", "/error"]} />
+      <div className="container-fluid h-100">
+        <main role="main" className="h-100">
+          <Routes>
+            <Route
+              path="/"
+              element={<RouteGuard element={<List />} />}
+            />
+            <Route
+              path="/labels"
+              element={<RouteGuard element={<Labels />} />}
+            />
+
+            {/* Login and logout */}
+            <Route
+              path="/login"
+              element={<Login />}
+            />
+            <Route
+              path="/logout"
+              element={<Logout />}
+            />
+
+            {/* Error and catch all routes */}
+            <Route path="/error" element={<Error404 />} />
+            <Route path="*" element={<Navigate to="/error" />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 

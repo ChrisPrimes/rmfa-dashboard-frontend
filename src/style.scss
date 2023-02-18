@@ -1,0 +1,12 @@
+$primary: #5ab3cb;
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+.report-input {
+    max-width: 800px;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
