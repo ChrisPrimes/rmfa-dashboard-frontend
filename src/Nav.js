@@ -15,6 +15,8 @@ const Nav = ({ excludeRoutes }) => {
                     <div className="navbar-nav">
                         <NavLink className="nav-link" to="/">Collection List</NavLink>
                         <NavLink className="nav-link" to="/labels">Labels</NavLink>
+                        <a className="nav-link" href="https://remotedisplay.chrisprimes.com" target="_blank">Remote Display</a>
+                        <NavLink className="nav-link" to="/frame">Frame</NavLink>
                         <NavLink className="nav-link" to="/logout">Logout</NavLink>
                     </div>
                 </div>

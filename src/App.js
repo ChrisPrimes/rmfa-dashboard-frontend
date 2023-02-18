@@ -3,8 +3,9 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate
+  Navigate,
 } from "react-router-dom";
+import classNames from "classnames";
 
 import { List } from './List'
 import { Labels } from './Labels'
@@ -13,6 +14,7 @@ import { Error404 } from './Error404'
 import { RouteGuard } from './RouteGuard'
 import { Login } from './Login'
 import { Logout } from './Logout'
+import { Frame } from './Frame'
 
 import './style.scss';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -21,7 +23,9 @@ const App = () => {
   return (
     <Router>
       <Nav excludeRoutes={["/login", "/error"]} />
-      <div className="container-fluid h-100">
+      <div className={classNames("h-100", {
+        "container-fluid": true
+      })}>
         <main role="main" className="h-100">
           <Routes>
             <Route
@@ -31,6 +35,10 @@ const App = () => {
             <Route
               path="/labels"
               element={<RouteGuard element={<Labels />} />}
+            />
+            <Route
+              path="/frame"
+              element={<RouteGuard element={<Frame />} />}
             />
 
             {/* Login and logout */}
