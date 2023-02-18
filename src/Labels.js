@@ -8,7 +8,7 @@ import { ApiService } from './service/ApiService';
 
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
-    const [bio, setBio] = useState(['', '']);
+    const [bio, setBio] = useState(['', '', '', '']);
     const [error, setError] = useState(false);
     const [selectedReport, setSelectedReport] = useState(false);
 
@@ -48,7 +48,8 @@ const Labels = () => {
 
     const reportOptions = [
         { value: 'collectionAvery5160', label: 'Avery 5160 - 30 per sheet' },
-        { value: 'collectionAvery5126', label: 'Avery 5126 - 2 per sheet' }
+        { value: 'collectionAvery5126', label: 'Avery 5126 - 2 per sheet' },
+        { value: 'collectionAvery5168', label: 'Avery 5168 - 4 per sheet' }
     ]
 
 
@@ -94,8 +95,36 @@ const Labels = () => {
                         <textarea className="form-control" rows="10" value={bio[1]} onChange={(event) => updateBio(1, event.target.value)}>
                         </textarea>
                     </div>
-
                 </div>
+            }
+
+            {selectedReport === 'collectionAvery5168' &&
+                <>
+                    <div className="row mb-3">
+                        <div className="col">
+                            <label className="form-label">Bio #1</label>
+                            <textarea className="form-control" rows="10" value={bio[0]} onChange={(event) => updateBio(0, event.target.value)}>
+                            </textarea>
+                        </div>
+                        <div className="col">
+                            <label className="form-label">Bio #2</label>
+                            <textarea className="form-control" rows="10" value={bio[1]} onChange={(event) => updateBio(1, event.target.value)}>
+                            </textarea>
+                        </div>
+                    </div>
+                    <div className="row mb-3">
+                        <div className="col">
+                            <label className="form-label">Bio #3</label>
+                            <textarea className="form-control" rows="10" value={bio[2]} onChange={(event) => updateBio(2, event.target.value)}>
+                            </textarea>
+                        </div>
+                        <div className="col">
+                            <label className="form-label">Bio #4</label>
+                            <textarea className="form-control" rows="10" value={bio[3]} onChange={(event) => updateBio(3, event.target.value)}>
+                            </textarea>
+                        </div>
+                    </div>
+                </>
             }
 
             <button className={classNames("btn", "btn-primary", "mb-3", {
