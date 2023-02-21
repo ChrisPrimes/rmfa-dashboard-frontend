@@ -25,10 +25,8 @@ const Login = () => {
         setError(false);
         setLoading(true);
         AuthService.login(email, password).then((res) => {
-            if (res) {
-                setLoggedIn(true);
-            }
-        }).catch((err) => {
+            setLoggedIn(true);
+        }).catch(() => {
             setError("Login failed. Please try again.");
         }).finally(() => {
             setLoading(false);

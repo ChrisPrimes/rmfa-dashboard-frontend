@@ -23,7 +23,6 @@ const AuthService = {
             password: password
         }, false);
         setToken(data.token);
-        return true;
     },
     logout: () => {
         localStorage.clear();
