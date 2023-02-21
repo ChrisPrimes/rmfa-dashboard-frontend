@@ -18,7 +18,7 @@ const ApiService = {
         });
 
         if (!response.ok) {
-            if (response.status === 401) {
+            if (authenticated && response.status === 401) {
                 AuthService.logout();
                 document.body.innerHTML = "";
                 alert('Your session has expired.');

@@ -5,15 +5,18 @@ import { saveAs } from 'file-saver';
 import classNames from "classnames";
 
 import { ApiService } from './service/ApiService';
+import { InputButton } from './component/InputButton';
 
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
     const [bio, setBio] = useState(['', '', '', '']);
     const [error, setError] = useState(false);
     const [selectedReport, setSelectedReport] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const printLabels = async () => {
         setError(false);
+        setLoading(true);
 
         let userInput = collectionNumberInput.trim().split(',');
 
@@ -33,11 +36,13 @@ const Labels = () => {
         } catch (e) {
             console.error(e);
             setError("Error generating report. Check that your input is valid.");
+            setLoading(false);
             return;
         }
 
         const blob = new Blob([report], { type: 'application/pdf' });
         saveAs(blob, data.reportName + ".pdf");
+        setLoading(false);
     };
 
     const updateBio = (position, value) => {
@@ -127,9 +132,12 @@ const Labels = () => {
                 </>
             }
 
-            <button className={classNames("btn", "btn-primary", "mb-3", {
+            <InputButton className={classNames("btn", "btn-primary", "mb-3", {
                 disabled: !selectedReport
-            })} onClick={printLabels}>Generate</button>
+            })} onClick={printLabels}
+                loading={loading}>
+                Generate
+            </InputButton>
         </div>
     );
 }

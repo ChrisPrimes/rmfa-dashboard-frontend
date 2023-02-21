@@ -21,7 +21,7 @@ const AuthService = {
         const data = await ApiService.post(ApiService.serverRoot() + "/authorize", {
             username: email,
             password: password
-        });
+        }, false);
         setToken(data.token);
         return true;
     },
