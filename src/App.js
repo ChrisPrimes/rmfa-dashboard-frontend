@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -6,6 +6,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import classNames from "classnames";
+
+import { AuthService } from './service/AuthService';
 
 import { List } from './List'
 import { Labels } from './Labels'
@@ -20,6 +22,13 @@ import './style.scss';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const App = () => {
+  useEffect(() => {
+    if (AuthService.isSessionExpired()) {
+      AuthService.logout();
+      window.location = '/';
+    }
+  }, []);
+
   return (
     <Router>
       <Nav excludeRoutes={["/login", "/error"]} />
