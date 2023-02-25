@@ -13,6 +13,7 @@ const Labels = () => {
     const [error, setError] = useState(false);
     const [selectedReport, setSelectedReport] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [fileUpload, setFileUpload] = useState(false);
 
     const printLabels = async () => {
         setError(false);
@@ -26,7 +27,8 @@ const Labels = () => {
 
         let reportParams = {
             collectionNumber: userInput,
-            artBio: bio
+            artBio: bio,
+            manualFile: fileUpload
         };
 
         let data, report;
@@ -51,8 +53,18 @@ const Labels = () => {
         setBio(newBio);
     }
 
+    const readFile = async (event) => {
+        const file = event.currentTarget.files[0];
+        const buffer = await file.arrayBuffer();
+        const byteArray = new Int8Array(buffer);
+
+        const base64 = Buffer.from(byteArray).toString("base64");
+        setFileUpload(base64);
+    };
+
     const reportOptions = [
         { value: 'collectionAvery5160', label: 'Avery 5160 - 30 per sheet' },
+        { value: 'collectionAvery5160FileUpload', label: 'Avery 5160 - 30 per sheet (File upload)' },
         { value: 'collectionAvery5126', label: 'Avery 5126 - 2 per sheet' },
         { value: 'collectionAvery5168', label: 'Avery 5168 - 4 per sheet' }
     ]
@@ -79,16 +91,17 @@ const Labels = () => {
                     }} />
             </div>
 
-            {selectedReport &&
+            {['collectionAvery5160', 'collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) &&
                 <div className="mb-3">
                     <label className="form-label">Collection Numbers</label>
                     <textarea className="form-control" rows="5" value={collectionNumberInput}
                         onChange={(event) => setCollectionNumberInput(event.target.value)}>
                     </textarea>
+                    <small className="form-text text-muted">Enter a list of collection numbers, seperated by commas. Example: 101, 204</small>
                 </div>
             }
 
-            {selectedReport === 'collectionAvery5126' &&
+            {['collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) &&
                 <div className="row mb-3">
                     <div className="col">
                         <label className="form-label">Bio #1</label>
@@ -107,18 +120,6 @@ const Labels = () => {
                 <>
                     <div className="row mb-3">
                         <div className="col">
-                            <label className="form-label">Bio #1</label>
-                            <textarea className="form-control" rows="10" value={bio[0]} onChange={(event) => updateBio(0, event.target.value)}>
-                            </textarea>
-                        </div>
-                        <div className="col">
-                            <label className="form-label">Bio #2</label>
-                            <textarea className="form-control" rows="10" value={bio[1]} onChange={(event) => updateBio(1, event.target.value)}>
-                            </textarea>
-                        </div>
-                    </div>
-                    <div className="row mb-3">
-                        <div className="col">
                             <label className="form-label">Bio #3</label>
                             <textarea className="form-control" rows="10" value={bio[2]} onChange={(event) => updateBio(2, event.target.value)}>
                             </textarea>
@@ -128,6 +129,24 @@ const Labels = () => {
                             <textarea className="form-control" rows="10" value={bio[3]} onChange={(event) => updateBio(3, event.target.value)}>
                             </textarea>
                         </div>
+                    </div>
+                </>
+            }
+
+            {selectedReport === 'collectionAvery5160FileUpload' &&
+                <>
+                    <div className="mb-3">
+                        <a href="/Collection Avery 5160 Template.xlsx">Download Excel Template</a>
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Collection File</label>
+                        <input className="form-control" type="file"
+                            onChange={(event) => {
+                                readFile(event)
+                            }}
+                            onClick={(event) => {
+                                event.target.value = null
+                            }} />
                     </div>
                 </>
             }

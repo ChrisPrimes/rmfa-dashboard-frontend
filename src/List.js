@@ -6,7 +6,7 @@ const List = () => {
     const [data, setData] = useState(false)
 
     useEffect(() => {
-        ApiService.get("https://www.rochestermfa.org/api/rmfa/v1/collection/list?collection_number=-1").then((res) => {
+        ApiService.get(ApiService.serverRoot() + "/proxy/collectionList", true).then((res) => {
             setData(res);
         });
     }, []);
