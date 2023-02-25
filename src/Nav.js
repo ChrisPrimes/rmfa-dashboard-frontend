@@ -13,7 +13,7 @@ const Nav = ({ excludeRoutes }) => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
-                        <NavLink className="nav-link" to="/">Collection List</NavLink>
+                        <NavLink className="nav-link" to="/list">Collection List</NavLink>
                         <NavLink className="nav-link" to="/labels">Labels</NavLink>
                         <a className="nav-link" href="https://remotedisplay.chrisprimes.com" target="_blank" rel="noreferrer">Remote Display</a>
                         <NavLink className="nav-link" to="/logout">Logout</NavLink>

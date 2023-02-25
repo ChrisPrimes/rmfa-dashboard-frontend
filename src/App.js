@@ -17,6 +17,7 @@ import { RouteGuard } from './RouteGuard'
 import { Login } from './Login'
 import { Logout } from './Logout'
 import { Frame } from './Frame'
+import { Home } from './Home'
 
 import './style.scss';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -39,6 +40,10 @@ const App = () => {
           <Routes>
             <Route
               path="/"
+              element={<RouteGuard element={<Home />} />}
+            />
+            <Route
+              path="/list"
               element={<RouteGuard element={<List />} />}
             />
             <Route
