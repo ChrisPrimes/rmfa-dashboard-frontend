@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { ApiService } from './service/ApiService';
+import { Wrapper } from './component/Wrapper'
 
 const List = () => {
     const [data, setData] = useState(false)
@@ -21,13 +22,14 @@ const List = () => {
     };
 
     return (
-        <div className="mt-3">
-            <h2 className="mb-3">Collection List</h2>
-            <div className="collection-list">
-                {data && renderList()}
+        <Wrapper>
+            <div className="mt-3">
+                <h2 className="mb-3">Collection List</h2>
+                <div className="collection-list">
+                    {data && renderList()}
+                </div>
             </div>
-
-        </div>
+        </Wrapper>
     );
 }
 

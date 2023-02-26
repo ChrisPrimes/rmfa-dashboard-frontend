@@ -5,7 +5,6 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import classNames from "classnames";
 
 import { AuthService } from './service/AuthService';
 
@@ -16,7 +15,7 @@ import { Error404 } from './Error404'
 import { RouteGuard } from './RouteGuard'
 import { Login } from './Login'
 import { Logout } from './Logout'
-import { Frame } from './Frame'
+import { RemoteDisplayFrame } from './RemoteDisplayFrame'
 import { Home } from './Home'
 
 import './style.scss';
@@ -33,10 +32,6 @@ const App = () => {
   return (
     <Router>
       <Nav excludeRoutes={["/login", "/error"]} />
-      <div className={classNames("h-100", {
-        "container-fluid": true
-      })}>
-        <main role="main" className="h-100">
           <Routes>
             <Route
               path="/"
@@ -51,8 +46,8 @@ const App = () => {
               element={<RouteGuard element={<Labels />} />}
             />
             <Route
-              path="/frame"
-              element={<RouteGuard element={<Frame />} />}
+              path="/remotedisplay"
+              element={<RouteGuard element={<RemoteDisplayFrame />} />}
             />
 
             {/* Login and logout */}
@@ -69,8 +64,6 @@ const App = () => {
             <Route path="/error" element={<Error404 />} />
             <Route path="*" element={<Navigate to="/error" />} />
           </Routes>
-        </main>
-      </div>
     </Router>
   );
 }
