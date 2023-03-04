@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Buffer } from 'buffer';
 import Select from 'react-select';
 import { saveAs } from 'file-saver';
@@ -10,11 +10,13 @@ import { Wrapper } from './component/Wrapper'
 
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
-    const [bio, setBio] = useState(['', '', '', '']);
+    const [collectionNumberParsedInput, setCollectionNumberParsedInput] = useState([]);
+    const [bio, setBio] = useState([]);
     const [error, setError] = useState(false);
     const [selectedReport, setSelectedReport] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fileUpload, setFileUpload] = useState(false);
+    const [printAll, setPrintAll] = useState(false);
 
     const printLabels = async () => {
         setError(false);
@@ -22,7 +24,13 @@ const Labels = () => {
 
         let userInput = collectionNumberInput.trim().split(',');
 
-        if (userInput.length === 1 && userInput[0] === '') {
+        if (userInput.length === 1 && userInput[0] === '' && !printAll) {
+            setError("You must enter collection numbers or select <strong>generate entire collection</strong> if applicable for the selected report.");
+            setLoading(false);
+            return;
+        }
+
+        if (printAll) {
             userInput = ['-1']
         }
 
@@ -63,6 +71,13 @@ const Labels = () => {
         setFileUpload(base64);
     };
 
+    const generateCollectionNumberLabel = (index) => {
+        const label = collectionNumberParsedInput[index];
+        if (label) {
+            return <> - <span className="fw-bold text-primary">{label}</span></>;
+        }
+    };
+
     const reportOptions = [
         { value: 'collectionAvery5160', label: 'Avery 5160 - 30 per sheet' },
         { value: 'collectionAvery5160FileUpload', label: 'Avery 5160 - 30 per sheet (File upload)' },
@@ -70,6 +85,9 @@ const Labels = () => {
         { value: 'collectionAvery5168', label: 'Avery 5168 - 4 per sheet' }
     ]
 
+    useEffect(() => {
+        setCollectionNumberParsedInput(collectionNumberInput.trim().split(','));
+    }, [collectionNumberInput])
 
     return (
         <Wrapper>
@@ -78,7 +96,7 @@ const Labels = () => {
 
                 {error &&
                     <div className="alert alert-warning alert-dismissible fade show" role="alert">
-                        {error}
+                        <span dangerouslySetInnerHTML={{ __html: error }} />
                         <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
@@ -89,11 +107,27 @@ const Labels = () => {
                         value={reportOptions.filter(obj => obj.value === selectedReport)}
                         onChange={(e) => {
                             setSelectedReport(e.value);
-
+                            setPrintAll(false);
+                            setCollectionNumberInput('');
+                            setError(false);
                         }} />
                 </div>
 
-                {['collectionAvery5160', 'collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) &&
+                {['collectionAvery5160'].includes(selectedReport) &&
+                    <>
+                        <div className="mb-3">
+                            <div className="form-check form-switch">
+                                <input className="form-check-input" type="checkbox" role="switch" checked={printAll} onChange={() => {
+                                    setPrintAll(!printAll);
+                                    setCollectionNumberInput('');
+                                }} />
+                                <label className="form-check-label">Generate entire collection</label>
+                            </div>
+                        </div>
+                    </>
+                }
+
+                {['collectionAvery5160', 'collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) && !printAll &&
                     <div className="mb-3">
                         <label className="form-label">Collection Numbers</label>
                         <textarea className="form-control" rows="5" value={collectionNumberInput}
@@ -106,12 +140,12 @@ const Labels = () => {
                 {['collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) &&
                     <div className="row mb-3">
                         <div className="col">
-                            <label className="form-label">Bio #1</label>
+                            <label className="form-label">Bio #1 {generateCollectionNumberLabel(0)}</label>
                             <textarea className="form-control" rows="10" value={bio[0]} onChange={(event) => updateBio(0, event.target.value)}>
                             </textarea>
                         </div>
                         <div className="col">
-                            <label className="form-label">Bio #2</label>
+                            <label className="form-label">Bio #2 {generateCollectionNumberLabel(1)}</label>
                             <textarea className="form-control" rows="10" value={bio[1]} onChange={(event) => updateBio(1, event.target.value)}>
                             </textarea>
                         </div>
@@ -122,12 +156,12 @@ const Labels = () => {
                     <>
                         <div className="row mb-3">
                             <div className="col">
-                                <label className="form-label">Bio #3</label>
+                                <label className="form-label">Bio #3 {generateCollectionNumberLabel(2)}</label>
                                 <textarea className="form-control" rows="10" value={bio[2]} onChange={(event) => updateBio(2, event.target.value)}>
                                 </textarea>
                             </div>
                             <div className="col">
-                                <label className="form-label">Bio #4</label>
+                                <label className="form-label">Bio #4 {generateCollectionNumberLabel(3)}</label>
                                 <textarea className="form-control" rows="10" value={bio[3]} onChange={(event) => updateBio(3, event.target.value)}>
                                 </textarea>
                             </div>
