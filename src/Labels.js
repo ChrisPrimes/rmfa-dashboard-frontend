@@ -8,6 +8,11 @@ import { ApiService } from './service/ApiService';
 import { InputButton } from './component/InputButton';
 import { Wrapper } from './component/Wrapper'
 
+const REPORT_KEY_5160 = 'collectionAvery5160';
+const REPORT_KEY_5126 = 'collectionAvery5126';
+const REPORT_KEY_5168 = 'collectionAvery5168';
+const REPORT_KEY_5160_UPLOAD = 'collectionAvery5160FileUpload';
+
 const Labels = () => {
     const [collectionNumberInput, setCollectionNumberInput] = useState('');
     const [collectionNumberParsedInput, setCollectionNumberParsedInput] = useState([]);
@@ -24,7 +29,7 @@ const Labels = () => {
 
         let userInput = collectionNumberInput.trim().split(',');
 
-        if (userInput.length === 1 && userInput[0] === '' && !printAll) {
+        if (userInput.length === 1 && userInput[0] === '' && !printAll  && selectedReport !== REPORT_KEY_5160_UPLOAD) {
             setError("You must enter collection numbers or select <strong>generate entire collection</strong> if applicable for the selected report.");
             setLoading(false);
             return;
@@ -79,10 +84,10 @@ const Labels = () => {
     };
 
     const reportOptions = [
-        { value: 'collectionAvery5160', label: 'Avery 5160 - 30 per sheet' },
-        { value: 'collectionAvery5160FileUpload', label: 'Avery 5160 - 30 per sheet (File upload)' },
-        { value: 'collectionAvery5126', label: 'Avery 5126 - 2 per sheet' },
-        { value: 'collectionAvery5168', label: 'Avery 5168 - 4 per sheet' }
+        { value: REPORT_KEY_5160, label: 'Avery 5160 - 30 per sheet' },
+        { value: REPORT_KEY_5160_UPLOAD, label: 'Avery 5160 - 30 per sheet (File upload)' },
+        { value: REPORT_KEY_5126, label: 'Avery 5126 - 2 per sheet' },
+        { value: REPORT_KEY_5168, label: 'Avery 5168 - 4 per sheet' }
     ]
 
     useEffect(() => {
@@ -113,7 +118,7 @@ const Labels = () => {
                         }} />
                 </div>
 
-                {['collectionAvery5160'].includes(selectedReport) &&
+                {[REPORT_KEY_5160].includes(selectedReport) &&
                     <>
                         <div className="mb-3">
                             <div className="form-check form-switch">
@@ -127,7 +132,7 @@ const Labels = () => {
                     </>
                 }
 
-                {['collectionAvery5160', 'collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) && !printAll &&
+                {[REPORT_KEY_5160, REPORT_KEY_5126, REPORT_KEY_5168].includes(selectedReport) && !printAll &&
                     <div className="mb-3">
                         <label className="form-label">Collection Numbers</label>
                         <textarea className="form-control" rows="5" value={collectionNumberInput}
@@ -137,7 +142,7 @@ const Labels = () => {
                     </div>
                 }
 
-                {['collectionAvery5126', 'collectionAvery5168'].includes(selectedReport) &&
+                {[REPORT_KEY_5126, REPORT_KEY_5168].includes(selectedReport) &&
                     <div className="row mb-3">
                         <div className="col">
                             <label className="form-label">Bio #1 {generateCollectionNumberLabel(0)}</label>
@@ -152,7 +157,7 @@ const Labels = () => {
                     </div>
                 }
 
-                {selectedReport === 'collectionAvery5168' &&
+                {selectedReport === REPORT_KEY_5168 &&
                     <>
                         <div className="row mb-3">
                             <div className="col">
@@ -169,7 +174,7 @@ const Labels = () => {
                     </>
                 }
 
-                {selectedReport === 'collectionAvery5160FileUpload' &&
+                {selectedReport === REPORT_KEY_5160_UPLOAD &&
                     <>
                         <div className="mb-3">
                             <a href="/Collection Avery 5160 Template.xlsx">Download Excel Template</a>
