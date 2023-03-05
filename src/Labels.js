@@ -69,6 +69,13 @@ const Labels = () => {
 
     const readFile = async (event) => {
         const file = event.currentTarget.files[0];
+
+        if(file.name.split('.').pop() !== 'xlsx') {
+            event.target.value = null;
+            setError("Only Excel (.xlsx) files are allowed.");
+            return;
+        }
+
         const buffer = await file.arrayBuffer();
         const byteArray = new Int8Array(buffer);
 
@@ -187,6 +194,7 @@ const Labels = () => {
                                 }}
                                 onClick={(event) => {
                                     event.target.value = null
+                                    setError(false);
                                 }} />
                         </div>
                     </>
